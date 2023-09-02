@@ -1,0 +1,64 @@
+﻿@*@model ExcelWithOutSaving.Models.ExcelUploadRequestModel
+    @{
+        ViewBag.Title = "Home Page";
+    }
+
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+    <div>
+        <h4>Select a file to upload:</h4>
+        @Html.TextBoxFor(m => m.File, new { type = "file" })
+        <button type="submit">Upload file</button>
+        <label id="UploadStatusLabel">@Model.UploadStatusLabel</label>
+
+    </div>
+    }*@
+
+
+
+@using System.Data
+@model ExcelWithOutSaving.Models.ExcelUploadRequestModel
+@using ExcelWithOutSaving.Models
+
+
+<h2>Excel Data</h2>
+@if (!string.IsNullOrEmpty(Model.UploadStatusLabel))
+{
+    <div class="alert alert-info">@Model.UploadStatusLabel</div>
+}
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="File">Upload Excel File:</label>
+        <input type="file" name="File" id="File" accept=".xlsx" />
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+}
+
+
+@if (Model.DataTable != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                @foreach (DataColumn column in Model.DataTable.Columns)
+                {
+                    <th>@column.ColumnName</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DataRow row in Model.DataTable.Rows)
+            {
+                <tr>
+                    @foreach (var item in row.ItemArray)
+                    {
+                        <td>@item</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
